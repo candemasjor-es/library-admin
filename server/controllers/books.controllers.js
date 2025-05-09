@@ -7,8 +7,8 @@ const getBooks = (req, res) => {
 
 const createBook = async (req, res) => {
   const createdBook = await Book.create({
-    title: "Cinco semanas en globo",
-    description: "Hola",
+    title: "black and font dev",
+    description: "camilo",
     length: 350,
   });
   res.send(createdBook.id);
