@@ -32,6 +32,7 @@ const loanBookToMember = async (req, res) => {
   });
   res.status(201).send({ deadline: createdLoan.deadline });
 };
+
 const returnBook = async (req, res) => {
   const bookId = req.body.bookId;
   const returnLoan = await Loan.update(
@@ -73,6 +74,10 @@ const getLoan = async (req, res) => {
         model: Book,
         attributes: ["title"],
       },
+      {
+        model: Member,
+        attributes: ["name"],
+      },
     ],
   });
 
@@ -80,7 +85,10 @@ const getLoan = async (req, res) => {
     returnDate: loan.returnDate,
     loanDate: loan.loanDate,
     deadline: loan.deadline,
-    bookTitle: loan.Book.title,
+    bookId: loan?.BookId,
+    memberId: loan?.MemberId,
+    bookTitle: loan?.Book?.title,
+    memberName: loan?.Member?.name,
   }));
 
   res.send({ loans: response });

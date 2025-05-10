@@ -6,12 +6,21 @@ const getBooks = (req, res) => {
 };
 
 const createBook = async (req, res) => {
-  const createdBook = await Book.create({
-    title: "black and font dev",
-    description: "camilo",
-    length: 350,
-  });
-  res.send(createdBook.id);
+  try {
+    const { title, description, author, publicationYear } = req.body;
+
+    const createdBook = await Book.create({
+      title,
+      description,
+      author,
+      publicationYear,
+    });
+
+    res.status(201).send({ id: createdBook.id });
+  } catch (error) {
+    console.error("Error creating book:", error);
+    res.status(500).send("An error occurred while creating the book.");
+  }
 };
 
 exports.getBooks = getBooks;
