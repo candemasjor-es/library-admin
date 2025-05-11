@@ -1,27 +1,30 @@
-// CLIENTE
 const BASE_URL = "http://localhost:8000";
 
-const inputAnimal = document.getElementById("inputAnimal");
-const inputStrength = document.getElementById("inputStrength");
+const inputTitle = document.getElementById("inputTitle");
+const inputDescription = document.getElementById("inputDescription");
+const inputAuthor = document.getElementById("inputAuthor");
+const inputPublicationYear = document.getElementById("inputPublicationYear");
 const btnCreate = document.getElementById("btnCreate");
 
-const createAnimal = () => {
-  const animalToCreate = inputAnimal.value;
-  const strengthToCreate = Number(inputStrength.value);
+const createBooks = () => {
 
-  fetch(BASE_URL + "/animals", {
+  fetch(BASE_URL + "/books", {
     headers: {
       "Content-Type": "application/json",
     },
     method: "POST",
     body: JSON.stringify({
-      name: animalToCreate,
-      strength: strengthToCreate,
+      title: inputTitle.value,
+      description: inputDescription.value,
+      author: inputAuthor.value,
+      publicationYear: inputPublicationYear.value,
     }),
   }).then(() => {
-    inputAnimal.value = "";
-    inputStrength.value = "";
-    getAnimals();
+    inputTitle.value = "";
+    inputDescription.value = "";
+    inputAuthor.value = "";
+    inputPublicationYear.value = "";
+    getBooks();
   });
 };
 
@@ -75,5 +78,5 @@ const updateAnimal = (animal) => {
   });
 };
 
-btnCreate.addEventListener("click", createAnimal);
+btnCreate.addEventListener("click", createBooks);
 getAnimals();
