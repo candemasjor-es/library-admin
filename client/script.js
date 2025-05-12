@@ -4,6 +4,7 @@ const inputTitle = document.getElementById("inputTitle");
 const inputDescription = document.getElementById("inputDescription");
 const inputAuthor = document.getElementById("inputAuthor");
 const inputPublicationYear = document.getElementById("inputPublicationYear");
+const inputIsbn = document.getElementById("inputISBN");
 const btnCreate = document.getElementById("btnCreate");
 
 const createBooks = () => {
@@ -18,12 +19,14 @@ const createBooks = () => {
       description: inputDescription.value,
       author: inputAuthor.value,
       publicationYear: inputPublicationYear.value,
+      ISBN: inputIsbn.value,
     }),
   }).then(() => {
     inputTitle.value = "";
     inputDescription.value = "";
     inputAuthor.value = "";
     inputPublicationYear.value = "";
+    inputIsbn.value = "";
     getBooks();
   });
 };

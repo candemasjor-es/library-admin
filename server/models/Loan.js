@@ -1,22 +1,22 @@
 const { DataTypes } = require("sequelize");
-const Book = require("../models/Book");
-const Member = require("../models/Member");
-const db = require("../db");
+const db = require("../db")
+const Book = require("../models/Book")
+const Member = require("../models/Member")
 
 const Loan = db.sequelize.define(
   "Loan",
   {
     returnDate: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATE
     },
     loanDate: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: false
     },
     deadline: {
       type: DataTypes.DATE,
-      allowNull: false,
-    },
+      allowNull: false
+    }
   },
   {}
 );

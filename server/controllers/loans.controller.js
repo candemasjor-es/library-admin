@@ -11,12 +11,14 @@ const loanBookToMember = async (req, res) => {
 
   const foundBook = await Book.findByPk(bookId);
   if (!foundBook) {
-    return res.status(404).send("Book not found");
+    res.status(404).send("Book not found");
+    return;
   }
 
   const foundMember = await Member.findByPk(memberId);
   if (!foundMember) {
-    return res.status(404).send("Member not found");
+    res.status(404).send("Member not found");
+    return;
   }
 
   const currentDate = new Date();
@@ -25,7 +27,7 @@ const loanBookToMember = async (req, res) => {
   );
 
   const createdLoan = await Loan.create({
-    loanDate: new Date(),
+    loanDate: currentDate,
     deadline: calcuatedDeadline,
     BookId: bookId,
     MemberId: memberId,
@@ -35,65 +37,64 @@ const loanBookToMember = async (req, res) => {
 
 const returnBook = async (req, res) => {
   const bookId = req.body.bookId;
-  const returnLoan = await Loan.update(
-    {
-      returnDate: new Date(),
-    },
+
+  const foundBook = await Book.findByPk(bookId);
+  if (!foundBook) {
+    res.status(404).send("Book not found");
+    return;
+  }
+
+  const updatedLoans = await Loan.update(
+    { returnDate: new Date() },
     {
       where: {
-        bookId: bookId,
+        BookId: bookId,
         returnDate: null,
       },
     }
   );
-  res.send({ cancelLoans: returnLoan[0] });
+
+  res.send({ canceledLoans: updatedLoans[0] });
 };
 
-const getLoan = async (req, res) => {
+const getLoans = async (req, res) => {
+  console.log(req.user);
   const memberId = req.query.memberId;
   const activeLoans = req.query.activeLoans;
 
-  const whereCondition = {
-    MemberId: memberId,
-  };
-
-  if (activeLoans === "true") {
-    whereCondition.returnDate = null;
+  const whereFilter = {};
+  if (memberId) {
+    whereFilter.MemberId = memberId;
   }
-
+  if (activeLoans === "true") {
+    whereFilter.returnDate = null;
+  }
   if (activeLoans === "false") {
-    whereCondition.returnDate = {
+    whereFilter.returnDate = {
       [Op.not]: null,
     };
   }
 
   const loans = await Loan.findAll({
-    where: whereCondition,
-    include: [
-      {
-        model: Book,
-        attributes: ["title"],
-      },
-      {
-        model: Member,
-        attributes: ["name"],
-      },
-    ],
+    where: whereFilter,
+    include: [{ model: Book, attributes: ['title'] }, {model: Member, attributes: ['name']}],
   });
 
-  const response = loans.map((loan) => ({
-    returnDate: loan.returnDate,
-    loanDate: loan.loanDate,
-    deadline: loan.deadline,
-    bookId: loan?.BookId,
-    memberId: loan?.MemberId,
-    bookTitle: loan?.Book?.title,
-    memberName: loan?.Member?.name,
-  }));
+  const parsedLoans = loans.map((loan) => {
+    return {
+      returnDate: loan.returnDate,
+      loanDate: loan.loanDate,
+      deadline: loan.deadline,
+      bookId: loan?.BookId,
+      memberId: loan?.MemberId,
+      bookTitle: loan?.Book?.title,
+      memberName: loan?.Member?.name,
+    };
+  });
 
-  res.send({ loans: response });
+  res.send(parsedLoans);
 };
 
+exports.getLoans = getLoans;
 exports.loanBookToMember = loanBookToMember;
 exports.returnBook = returnBook;
-exports.getLoan = getLoan;
